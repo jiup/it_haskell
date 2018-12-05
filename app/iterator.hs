@@ -34,13 +34,10 @@ instance Iterator List where
   iterFold f v (x `Cons` xs) = iterFold f (f v x) xs
 
 instance Iterator Tree where
-  iterMap _ _ = Leaf
---  iterMap f (Branch x xs) = f x `Branch` iterMap f xs
---  iterMap f (Branch x Nil) = Branch (f x) $ Nil
---  iterMap f (Branch x (y `Cons` ys)) = Branch (f x) $ (iterMap f y) `Cons` ys
-  iterFold _ v _ = v
---  iterFold f v (Tree t) =
-  -- TODO
+  iterMap _ Leaf = Leaf
+  iterMap f (Branch x xs) = f x `Branch` iterMap (iterMap f) xs
+  iterFold _ v Leaf = v
+  iterFold f v (Branch x xs) = iterFold (iterFold f) (f v x) xs
 
 instance Iterator Queue where
   iterMap _ (Queue Nil Nil) = Queue Nil Nil
@@ -48,6 +45,3 @@ instance Iterator Queue where
   iterFold _ v (Queue Nil Nil) = v
   iterFold f v (Queue Nil ys) = iterFold f v ys
   iterFold f v (Queue xs ys) = iterFold f v (rebalance (Queue xs ys))
---  iterFold f v (Queue xs ys) = if Eq (xs Nil)
---                                then iterFold f v ys
---                                else iterFold f v (rebalance (Queue xs ys))
