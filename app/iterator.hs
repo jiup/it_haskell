@@ -28,8 +28,13 @@ dequeue (Queue xs (Cons y ys)) = (Just y, Queue xs ys)
 dequeue (Queue xs Nil) = dequeue (rebalance (Queue xs Nil))
 
 instance Iterator List where
-  -- TODO
+  iterMap _ Nil = Nil
+  iterMap f (x `Cons` xs) = f x `Cons` iterMap f xs
+  iterFold _ v Nil = v
+  iterFold f v (x `Cons` xs) = iterFold f (f v x) xs
+
 instance Iterator Tree where
   -- TODO
+
 instance Iterator Queue where
   -- TODO
